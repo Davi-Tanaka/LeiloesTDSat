@@ -1,7 +1,5 @@
 # Sistema de leilões
----------------------
 <br/>
-
 ## Sobre
 Sistema que informatiza a rotina de um leilão
 

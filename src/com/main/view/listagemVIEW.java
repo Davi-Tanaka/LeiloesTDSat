@@ -1,6 +1,8 @@
-package com.main;
+package com.main.view;
 
 
+import com.main.dao.ProdutosDAO;
+import com.main.dto.ProdutosDTO;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 

@@ -1,4 +1,4 @@
-package com.main;
+package com.main.dto;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license

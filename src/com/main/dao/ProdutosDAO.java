@@ -1,4 +1,4 @@
-package com.main;
+package com.main.dao;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -10,6 +10,7 @@ package com.main;
  * @author Adm
  */
 
+import com.main.dto.ProdutosDTO;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import javax.swing.JOptionPane;

@@ -1,4 +1,7 @@
-package com.main;
+package com.main.view;
+
+import com.main.dao.ProdutosDAO;
+import com.main.dto.ProdutosDTO;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
