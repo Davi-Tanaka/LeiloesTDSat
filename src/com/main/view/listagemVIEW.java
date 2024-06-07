@@ -3,33 +3,63 @@ package com.main.view;
 
 import com.main.dao.ProdutosDAO;
 import com.main.dto.ProdutosDTO;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVIEW extends javax.swing.JFrame {
+
+    private ProdutosDAO produtosDao = new ProdutosDAO();
+    
     public listagemVIEW() {
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        this.setUndecorated(false);
+        this.setVisible(true);
+        
         initComponents();
-        listarProdutos();
+        
+        try {
+            ArrayList<ProdutosDTO> listagem = produtosDao.listarProdutos();
+            listarProdutos(listagem);
+        } catch(SQLException error) {
+            JOptionPane.showConfirmDialog(this, "Error ao listar produtos :c");
+            System.err.println(error);
+        }
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        grid = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listaProdutos = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 16), new java.awt.Dimension(0, 16), new java.awt.Dimension(32767, 16));
+        vender_prod_flow = new javax.swing.JPanel();
+        vender_produto_container = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(16, 0), new java.awt.Dimension(16, 0), new java.awt.Dimension(16, 32767));
         jScrollPane2 = new javax.swing.JScrollPane();
         id_produto_venda = new javax.swing.JTextPane();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(16, 0), new java.awt.Dimension(16, 0), new java.awt.Dimension(16, 32767));
         btnVender = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
+        btn_container = new javax.swing.JPanel();
+        flow = new javax.swing.JPanel();
         btnVendas = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Listagem de produtos");
+        setPreferredSize(new java.awt.Dimension(720, 500));
+
+        grid.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(720, 500));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(720, 300));
 
         listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -57,15 +87,43 @@ public class listagemVIEW extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        listaProdutos.setPreferredSize(new java.awt.Dimension(100, 300));
         jScrollPane1.setViewportView(listaProdutos);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        grid.add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
         jLabel1.setText("Lista de Produtos");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        grid.add(jLabel1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        grid.add(filler1, gridBagConstraints);
+
+        vender_prod_flow.setLayout(new javax.swing.BoxLayout(vender_prod_flow, javax.swing.BoxLayout.LINE_AXIS));
+
+        vender_produto_container.setMinimumSize(new java.awt.Dimension(100, 100));
+        vender_produto_container.setPreferredSize(new java.awt.Dimension(50, 40));
+        vender_produto_container.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 5));
 
         jLabel2.setFont(new java.awt.Font("Lucida Fax", 0, 14)); // NOI18N
-        jLabel2.setText("Vender Produto (ID)");
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("Vender Produto (ID):");
+        vender_produto_container.add(jLabel2);
+        vender_produto_container.add(filler3);
 
+        id_produto_venda.setPreferredSize(new java.awt.Dimension(250, 20));
         jScrollPane2.setViewportView(id_produto_venda);
+
+        vender_produto_container.add(jScrollPane2);
+        vender_produto_container.add(filler2);
 
         btnVender.setText("Vender");
         btnVender.addActionListener(new java.awt.event.ActionListener() {
@@ -73,13 +131,32 @@ public class listagemVIEW extends javax.swing.JFrame {
                 btnVenderActionPerformed(evt);
             }
         });
+        vender_produto_container.add(btnVender);
+
+        vender_prod_flow.add(vender_produto_container);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        grid.add(vender_prod_flow, gridBagConstraints);
+
+        btn_container.setLayout(new javax.swing.BoxLayout(btn_container, javax.swing.BoxLayout.LINE_AXIS));
+
+        flow.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
 
         btnVendas.setText("Consultar Vendas");
+        btnVendas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnVendasMouseClicked(evt);
+            }
+        });
         btnVendas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnVendasActionPerformed(evt);
             }
         });
+        flow.add(btnVendas);
 
         btnVoltar.setText("Voltar");
         btnVoltar.addActionListener(new java.awt.event.ActionListener() {
@@ -87,66 +164,36 @@ public class listagemVIEW extends javax.swing.JFrame {
                 btnVoltarActionPerformed(evt);
             }
         });
+        flow.add(btnVoltar);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnVender))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnVoltar)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnVendas, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(49, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(193, 193, 193))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVender))
-                .addGap(29, 29, 29)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnVendas)
-                    .addComponent(btnVoltar))
-                .addGap(17, 17, 17))
-        );
+        btn_container.add(flow);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        grid.add(btn_container, gridBagConstraints);
+
+        getContentPane().add(grid, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
-        ProdutosDAO produtosdao = new ProdutosDAO();
         
         try {
             int prod_id = Integer.parseInt(id);
-            
-            produtosdao.vender(prod_id);
-            listarProdutos();
+            try {
+                ArrayList<ProdutosDTO> listagem = produtosDao.listarProdutos();
+                produtosDao.vender(prod_id);
+                listarProdutos(listagem);                
+                
+            } catch(SQLException error) {
+                JOptionPane.showMessageDialog(this, "Erro ao tentar listar produtos");
+                System.err.println(error);
+            }
         } catch(NumberFormatException error) {
             System.err.println(error);
             
@@ -161,10 +208,15 @@ public class listagemVIEW extends javax.swing.JFrame {
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
         JFrame cadastroView = new cadastroVIEW();         
         this.setVisible(false);
-        
         cadastroView.setVisible(true);
-
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseClicked
+        // TODO add your handling code here:
+        listagemVendasVIEW listagemDeVendasView = new listagemVendasVIEW();
+        this.setVisible(false);
+        listagemDeVendasView.setVisible(true);
+    }//GEN-LAST:event_btnVendasMouseClicked
 
     /**
      * @param args the command line arguments
@@ -205,30 +257,33 @@ public class listagemVIEW extends javax.swing.JFrame {
     private javax.swing.JButton btnVendas;
     private javax.swing.JButton btnVender;
     private javax.swing.JButton btnVoltar;
+    private javax.swing.JPanel btn_container;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
+    private javax.swing.JPanel flow;
+    private javax.swing.JPanel grid;
     private javax.swing.JTextPane id_produto_venda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable listaProdutos;
+    private javax.swing.JPanel vender_prod_flow;
+    private javax.swing.JPanel vender_produto_container;
     // End of variables declaration//GEN-END:variables
 
-    private void listarProdutos() {        
-        try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
-            
+    private void listarProdutos(ArrayList<ProdutosDTO> produtos) {        
+        try {            
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setRowCount(0);
-            
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            for (int i = 0; i < listagem.size(); i++) {
+                        
+            for (int i = 0; i < produtos.size(); i++) {
                 model.insertRow(i, new Object[] {
-                    listagem.get(i).getId(),
-                    listagem.get(i).getNome(),
-                    listagem.get(i).getValor(),
-                    listagem.get(i).getStatus()
+                    produtos.get(i).getId(),
+                    produtos.get(i).getNome(),
+                    produtos.get(i).getValor(),
+                    produtos.get(i).getStatus()
                 });
             }
         } catch (Exception e) {
