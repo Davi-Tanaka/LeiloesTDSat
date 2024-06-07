@@ -3,15 +3,25 @@ package com.main.view;
 
 import com.main.dao.ProdutosDAO;
 import com.main.dto.ProdutosDTO;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVIEW extends javax.swing.JFrame {
+
+    private ProdutosDAO produtosDao = new ProdutosDAO();
+    
     public listagemVIEW() {
         initComponents();
-        listarProdutos();
+        try {
+            ArrayList<ProdutosDTO> listagem = produtosDao.listarProdutos();
+            listarProdutos(listagem);
+        } catch(SQLException error) {
+            JOptionPane.showConfirmDialog(this, "Error ao listar produtos :c");
+            System.err.println(error);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -30,6 +40,7 @@ public class listagemVIEW extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Listagem de produtos");
 
         listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -140,13 +151,18 @@ public class listagemVIEW extends javax.swing.JFrame {
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
-        ProdutosDAO produtosdao = new ProdutosDAO();
         
         try {
             int prod_id = Integer.parseInt(id);
-            
-            produtosdao.vender(prod_id);
-            listarProdutos();
+            try {
+                ArrayList<ProdutosDTO> listagem = produtosDao.listarProdutos();
+                produtosDao.vender(prod_id);
+                listarProdutos(listagem);                
+                
+            } catch(SQLException error) {
+                JOptionPane.showMessageDialog(this, "Erro ao tentar listar produtos");
+                System.err.println(error);
+            }
         } catch(NumberFormatException error) {
             System.err.println(error);
             
@@ -214,21 +230,17 @@ public class listagemVIEW extends javax.swing.JFrame {
     private javax.swing.JTable listaProdutos;
     // End of variables declaration//GEN-END:variables
 
-    private void listarProdutos() {        
-        try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
-            
+    private void listarProdutos(ArrayList<ProdutosDTO> produtos) {        
+        try {            
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setRowCount(0);
-            
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            for (int i = 0; i < listagem.size(); i++) {
+                        
+            for (int i = 0; i < produtos.size(); i++) {
                 model.insertRow(i, new Object[] {
-                    listagem.get(i).getId(),
-                    listagem.get(i).getNome(),
-                    listagem.get(i).getValor(),
-                    listagem.get(i).getStatus()
+                    produtos.get(i).getId(),
+                    produtos.get(i).getNome(),
+                    produtos.get(i).getValor(),
+                    produtos.get(i).getStatus()
                 });
             }
         } catch (Exception e) {
