@@ -1,6 +1,5 @@
 package com.main.view;
 
-
 import com.main.dao.ProdutosDAO;
 import com.main.dto.ProdutosDTO;
 import java.sql.SQLException;
@@ -10,16 +9,21 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVendasVIEW extends javax.swing.JFrame {
-
+    private Thread listagem_thread = null;
+    
     private ProdutosDAO produtosDao = new ProdutosDAO();
     
     public listagemVendasVIEW() {
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        this.setUndecorated(false);
+        this.setVisible(true);
+        
         initComponents();
         try {
-            ArrayList<ProdutosDTO> listagem = produtosDao.listarProdutos();
+            ArrayList<ProdutosDTO> listagem = produtosDao.listartProdutosVendidos();
             listarProdutos(listagem);
         } catch(SQLException error) {
-            JOptionPane.showConfirmDialog(this, "Error ao listar produtos :c");
+            JOptionPane.showConfirmDialog(this, "Error ao listar produtos vendidos:c");
             System.err.println(error);
         }
     }
@@ -39,9 +43,12 @@ public class listagemVendasVIEW extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Listagem de vendas");
-        setEnabled(false);
+        setPreferredSize(new java.awt.Dimension(720, 436));
 
+        grid.setMinimumSize(new java.awt.Dimension(1, 1));
         grid.setLayout(new javax.swing.BoxLayout(grid, javax.swing.BoxLayout.PAGE_AXIS));
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(456, 300));
 
         listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -82,6 +89,11 @@ public class listagemVendasVIEW extends javax.swing.JFrame {
 
         btnProdutos.setText("Consultar Produtos");
         btnProdutos.setPreferredSize(new java.awt.Dimension(180, 30));
+        btnProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnProdutosMouseClicked(evt);
+            }
+        });
         btnProdutos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProdutosActionPerformed(evt);
@@ -96,6 +108,11 @@ public class listagemVendasVIEW extends javax.swing.JFrame {
 
         btnCadastrar.setText("Cadastrar");
         btnCadastrar.setPreferredSize(new java.awt.Dimension(130, 30));
+        btnCadastrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCadastrarMouseClicked(evt);
+            }
+        });
         btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCadastrarActionPerformed(evt);
@@ -121,11 +138,22 @@ public class listagemVendasVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        JFrame cadastroView = new cadastroVIEW();         
-        this.setVisible(false);
-        
-        cadastroView.setVisible(true);
     }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnCadastrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCadastrarMouseClicked
+        // TODO add your handling code here:
+        cadastroVIEW cadastroView = new cadastroVIEW();  
+        this.setVisible(false);
+        cadastroView.setVisible(true);
+
+    }//GEN-LAST:event_btnCadastrarMouseClicked
+
+    private void btnProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseClicked
+        // TODO add your handling code here:
+        listagemVIEW listarProdutosView = new listagemVIEW();
+        this.setVisible(false);
+        listarProdutosView.setVisible(true);
+    }//GEN-LAST:event_btnProdutosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -175,21 +203,32 @@ public class listagemVendasVIEW extends javax.swing.JFrame {
     private javax.swing.JTable listaProdutos;
     // End of variables declaration//GEN-END:variables
 
-    private void listarProdutos(ArrayList<ProdutosDTO> produtos) {        
-        try {            
-            DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
-            model.setRowCount(0);
-                        
-            for (int i = 0; i < produtos.size(); i++) {
-                model.insertRow(i, new Object[] {
-                    produtos.get(i).getId(),
-                    produtos.get(i).getNome(),
-                    produtos.get(i).getValor(),
-                    produtos.get(i).getStatus()
-                });
-            }
-        } catch (Exception e) {
-            System.err.println(e);
+    private void listarProdutos(ArrayList<ProdutosDTO> produtos) {  
+        if(listagem_thread != null && listagem_thread.isAlive()) {
+            listagem_thread.interrupt();
         }
+        
+        listagem_thread = new Thread() {
+            @Override
+            public void run() {
+                try {            
+                    DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
+                    model.setRowCount(0);
+
+                    for (int i = 0; i < produtos.size(); i++) {
+                        model.insertRow(i, new Object[] {
+                            produtos.get(i).getId(),
+                            produtos.get(i).getNome(),
+                            produtos.get(i).getValor(),
+                            produtos.get(i).getStatus()
+                        });
+                    }
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+            }
+        };
+        
+        listagem_thread.start();
     }
 }
